@@ -56,7 +56,8 @@ first_xprimeLocation <- first_xprimeLocation.test[,1]
 # UGH, Reading this is a mess, so I'm gonna continue to hack
 # I have to go through and remove any negitive currents, negitive current 
 # represents electrons in the detector which are typically repelled
-# by the bias applied to the detector. 
+# by the bias applied to the detector. The exception for this is that in the first location
+# negitive currents may be a product of the noise
 # I also want to remove any data that is wildly out of sync with the rest; 
 # I also don't think I need to look at any outliers. 
 # I expect outliers are caused by errors in reading that are 
@@ -65,20 +66,27 @@ first_xprimeLocation <- first_xprimeLocation.test[,1]
 # but not the noise caused by the floor vibrating when 
 # people are walking around and not physically hitting the 
 # system. 
-old.par <- par(mfrow=c(1,2))
-plot(maxima, main="PreClean")
+#old.par <- par(mfrow=c(1,2))
+#plot(first_xprimeLocation, main="PreClean")
 for (i in 1:700){
   if ( maxima[i] >= (median(maxima)+3*sd(maxima)) || maxima[i] <= (median(maxima)-4*sd(maxima))){
     maxima[i] = median(maxima)
   }
-  if (maxima_rightshifted[i]<=0){
-    maxima_rightshifted[i] = median(maxima)
+  
+  if (maxima_rightshifted[i] >= (median(maxima_rightshifted)+2.5*sd(maxima_rightshifted)) || maxima_rightshifted[i] <= (median(maxima_rightshifted)-2.5*sd(maxima_rightshifted))){
+    maxima_rightshifted[i] = median(maxima_rightshifted)
   }
-  if (first_xprimeLocation[i] <= 0){
-    first_xprimeLocation[i] = median(maxima)
+  if (first_xprimeLocation[i] >= (median(first_xprimeLocation)+2.5*sd(maxima))|| first_xprimeLocation[i] <= (median(first_xprimeLocation)-2.5*sd(first_xprimeLocation))){
+    first_xprimeLocation[i] = median(first_xprimeLocation)
   }
 }
-plot(maxima, main="postClean")
+#plot(first_xprimeLocation, main="postClean")
+#par(old.par)
+
+old.par <- par(mfrow=c(1, 3))
+plot(first_xprimeLocation, main = "xprime")
+plot(maxima_rightshifted, main = "rightshifted Max")
+plot(maxima, main="maxima")
 par(old.par)
 
 # looking at the data cleaned up shows me that there wasn't 
@@ -87,4 +95,46 @@ par(old.par)
 # between PLC and amount of noise, 
 
 # however we can really check this by running our code from week 7
+# we need to set the data up in a way that we can actually run our 
+# week 7 code. so we can run a loop though the data
+
+# noise across a single sample
+
+noise.2plc.first = abs(first_xprimeLocation[1:100]-median(first_xprimeLocation[1:100]))
+noise.2plc.shift = abs(maxima_rightshifted[1:100]-median(maxima_rightshifted[1:100]))
+noise.2plc.max = abs(maxima[1:100]-median(maxima[1:100]))
+#print('the model for the first area of data collection is')
+#FUNCION(noise.2plc.first)
+#print('the model for the area 25 micrometers from the maxima is')
+#print(FUNCION(noise.2plc.first))
+#print('the model for the area at maxima is')
+#print(FUNCTION(noise.2plc.max))
+old.par <- par(mfrow=c(1, 3))
+plot(noise.2plc.first, main = "xprime")
+plot(noise.2plc.shift, main = "rightshifted Max")
+plot(noise.2plc.max, main="maxima")
+par(old.par)
+
+#
+# noise across samples 2, 3, 5 & 6
+
+old.par <- par(mfrow=c(1, 4))
+
+noise.2plc = abs(first_xprimeLocation[201:300]-median(first_xprimeLocation[201:300]))
+noise.3plc = abs(first_xprimeLocation[301:400]-median(first_xprimeLocation[301:400]))
+noise.5plc = abs(first_xprimeLocation[501:600]-median(first_xprimeLocation[501:600]))
+noise.6plc = abs(first_xprimeLocation[601:700]-median(first_xprimeLocation[601:700]))
+
+plot(noise.2plc, main = "2PLC")
+plot(noise.3plc, main = "3PLC")
+plot(noise.5plc, main="5PLC")
+plot(noise.6plc, main="6PLC")
+par(old.par)
+
+##
+
+# Wierd visual area
+
+noise.odd = maxima[201:400] - min(maxima[201:400])
+plot(noise.odd)
 
