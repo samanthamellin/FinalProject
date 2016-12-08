@@ -103,6 +103,9 @@ par(old.par)
 noise.2plc.first = abs(first_xprimeLocation[1:100]-median(first_xprimeLocation[1:100]))
 noise.2plc.shift = abs(maxima_rightshifted[1:100]-median(maxima_rightshifted[1:100]))
 noise.2plc.max = abs(maxima[1:100]-median(maxima[1:100]))
+OurProbabilityDistribution(noise.2plc.first)
+OurProbabilityDistribution(noise.2plc.shift)
+OurProbabilityDistribution(noise.2plc.max)
 #print('the model for the first area of data collection is')
 #FUNCION(noise.2plc.first)
 #print('the model for the area 25 micrometers from the maxima is')
@@ -124,6 +127,11 @@ noise.2plc = abs(first_xprimeLocation[201:300]-median(first_xprimeLocation[201:3
 noise.3plc = abs(first_xprimeLocation[301:400]-median(first_xprimeLocation[301:400]))
 noise.5plc = abs(first_xprimeLocation[501:600]-median(first_xprimeLocation[501:600]))
 noise.6plc = abs(first_xprimeLocation[601:700]-median(first_xprimeLocation[601:700]))
+OurProbabilityDistribution(noise.2plc)
+OurProbabilityDistribution(noise.3plc)
+OurProbabilityDistribution(noise.5plc)
+OurProbabilityDistribution(noise.6plc)
+
 
 plot(noise.2plc, main = "2PLC")
 plot(noise.3plc, main = "3PLC")
@@ -134,7 +142,8 @@ par(old.par)
 ##
 
 # Wierd visual area
-
+old.par <- par(mfrow=c(1, 1))
 noise.odd = maxima[201:400] - min(maxima[201:400])
+OurProbabilityDistribution(noise.odd)
 plot(noise.odd)
 
